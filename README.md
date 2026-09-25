@@ -7,9 +7,10 @@ Static. Deterministic. No nonsense.
 ## Infrastructure
 
 - **Repo:** `Level-Zero-Context/hannoknatz.com` (GitHub)
-- **Hosting:** Cloudflare Pages, git-connected to this repo
+- **Hosting:** Cloudflare Pages (`hannoknatz-com.pages.dev`), git-connected to this repo
 - **Deploy:** every push to `main` triggers an automatic production build (git sync)
-- **Domain:** `hannoknatz.com` (Cloudflare zone, custom domain on the Pages project)
+- **Domain:** `hannoknatz.com` + `www.hannoknatz.com` (Cloudflare zone, proxied CNAMEs on the Pages project)
+- **One-time setup:** `scripts/setup-cloudflare-pages.sh` (idempotent, needs `CLOUDFLARE_API_TOKEN`)
 
 ## Local preview
 
