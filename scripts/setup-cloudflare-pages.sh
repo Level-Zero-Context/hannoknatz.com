@@ -73,10 +73,11 @@ BODY=$(jq -n \
   --arg name "$PROJECT" --arg branch "$PROD_BRANCH" \
   --arg owner "$GITHUB_OWNER" --arg repo "$GITHUB_REPO" \
   '{name: $name, production_branch: $branch,
-    source: {type: "github", owner: $owner, repo_name: $repo,
-             config: {deployments_enabled: true,
-                      production_deployments_enabled: true,
+    source: {type: "github",
+             config: {owner: $owner,
+                      repo_name: $repo,
                       production_branch: $branch,
+                      production_deployments_enabled: true,
                       pr_comments_enabled: true,
                       preview_deployment_setting: "all"}}}')
 R=$(api POST "$BASE/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects" "$BODY")
