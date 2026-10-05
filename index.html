@@ -1,35 +1,1404 @@
-<!DOCTYPE html>
-<html lang="de">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hanno Knatz</title>
-  <meta name="description" content="Hanno Knatz — personal website.">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      background: #0e0e10;
-      color: #f5f5f4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hanno Knatz — System Architecture · Scientific Data · Applied AI</title>
+<meta name="description" content="Technical leader and system architect for scientific software and data platforms. Led Lab IT at BioNTech and owned a global assay analysis platform; now building independent projects in AI agents, local inference and workflow automation.">
+<meta property="og:title" content="Hanno Knatz — System Architecture · Scientific Data · Applied AI">
+<meta property="og:description" content="System architect and technical leader for scientific data platforms (BioNTech), now applying that experience to AI agents and local inference.">
+<meta property="og:type" content="profile">
+<meta name="theme-color" content="#181818">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='2' y='2' width='60' height='60' rx='14' fill='%23181818' stroke='rgba(255,255,255,0.18)' stroke-width='2'/%3E%3Ctext x='32' y='42' font-family='Manrope,system-ui,sans-serif' font-size='26' font-weight='700' fill='%23ffffff' text-anchor='middle'%3EHK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #181818;
+    --bg-deep: #000000;
+    --line: rgba(255, 255, 255, 0.08);
+    --t1: #FFFFFF;
+    --t2: rgba(255, 255, 255, 0.78);
+    --t3: rgba(255, 255, 255, 0.62);
+    --t4: rgba(255, 255, 255, 0.42);
+    --grad-a: #FFFFFF;
+    --grad-b: #9B9B9B;
+    --ease: cubic-bezier(0.32, 0.72, 0, 1);
+    --sans: "Manrope", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --mono: "Geist Mono", ui-monospace, "SF Mono", monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--t2);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 24px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection { background: var(--t1); color: var(--bg); }
+
+  a { color: inherit; }
+
+  :focus-visible {
+    outline: 2px solid var(--t1);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 24px;
+    top: -48px;
+    z-index: 100;
+    padding: 8px 12px;
+    background: var(--t1);
+    color: var(--bg-deep);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: top 200ms var(--ease);
+  }
+  .skip-link:focus-visible { top: 24px; }
+
+  /* Grain overlay — the only permitted texture; gradients stay off the page */
+  .noise {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .container {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+  @media (min-width: 768px) {
+    .container { padding-inline: 40px; }
+  }
+
+  .stack-list {
+    list-style: none;
+    padding: 0;
+    margin: 14px 0 0;
+    display: grid;
+    gap: 12px;
+  }
+  .stack-list li {
+    padding-left: 22px;
+    position: relative;
+  }
+  .stack-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--sig, #DCC289);
+  }
+  .stack-name { font-weight: 600; color: var(--t1, #EDE4CC); }
+
+  /* Header bar — a clearly separated zone instead of a floating pill:
+     full-width, hairline border, dimmed glass, so scrolled content never
+     collides ambiguously with the links. */
+  .hero {
+    position: relative;
+    display: block;
+    height: 120vh;
+    padding-block: 0;
+  }
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+  #hero-scene-orbit {
+    position: absolute;
+    right: 6vw;
+    top: 50%;
+    transform: translateY(-50%);
+    width: min(56vw, 860px);
+    aspect-ratio: 1 / 1;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .stage-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(90deg, rgba(24,24,24,.55) 0%, rgba(24,24,24,.18) 42%, rgba(24,24,24,0) 66%),
+      linear-gradient(0deg, rgba(24,24,24,.92) 0%, rgba(24,24,24,0) 30%);
+  }
+  #hero-scene-orbit {
+    position: fixed;
+    right: -3vw;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 58vw;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    display: block;
+    z-index: 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.15) 26%, rgba(0,0,0,.7) 44%, #000 60%);
+    mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.15) 26%, rgba(0,0,0,.7) 44%, #000 60%);
+  }
+  .stage-readability {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(24,24,24,.88) 0%, rgba(24,24,24,.66) 38%, rgba(24,24,24,.10) 64%);
+  }
+  .hero-copy {
+    position: relative;
+    z-index: 3;
+    margin-top: -76vh;
+    max-width: 560px;
+    margin-left: 7%;
+    padding-bottom: 6vh;
+  }
+  main { position: relative; z-index: 2; background: #181818; }
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 24px;
+    background: rgba(24, 24, 24, 0.86);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+  /* Navigation only when it is needed: hidden over the hero, slides in
+     once the visitor scrolls past the fold (gated on html.js so no-JS
+     keeps the links). */
+  html.js .nav {
+    transform: translateY(-100%);
+    opacity: 0;
+    transition:
+      transform 450ms var(--ease),
+      opacity 350ms var(--ease);
+  }
+  html.js .nav.nav-in {
+    transform: none;
+    opacity: 1;
+  }
+  .nav a {
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    color: var(--t3);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: color 200ms var(--ease), background-color 200ms var(--ease), transform 200ms var(--ease);
+  }
+  .nav a:hover { color: var(--t1); }
+  .nav a:active { transform: scale(0.98); }
+  .nav a[aria-current="true"] {
+    color: var(--t1);
+    background: rgba(255, 255, 255, 0.08);
+  }
+  @media (max-width: 480px) {
+    .nav { gap: 0; padding: 4px 12px; }
+    .nav a { padding: 8px 8px; font-size: 12px; line-height: 16px; }
+  }
+
+  /* Hero — diorama: full-bleed Secession hall + the figure as a separate
+     cutout layer. On scroll the hall sinks (depth 0.5) while the figure
+     barely moves (depth 0.15), so he steps out of the painting. */
+
+
+
+
+
+  .hero-fig {
+    position: absolute;
+    right: clamp(-30px, 2vw, 50px);
+    bottom: 0;
+    height: 100%;
+    width: auto;
+    z-index: 1;
+    will-change: transform;
+    filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.35));
+    /* dissolve the lower body before the hero's overflow clip line — no
+       visible cut while the diorama parallaxes */
+    -webkit-mask-image: linear-gradient(180deg, #000 90%, transparent 99.5%);
+    mask-image: linear-gradient(180deg, #000 90%, transparent 99.5%);
+  }
+  /* Companion: der sitzende Laptop-Hanno begleitet den CV (Ping-Pong über
+     den sauberen Kurz-Bogen f061–f066). Unterkante weich maskiert. */
+  #companion { display: none;
+    position: fixed;
+    z-index: 3; /* über dem Hero-Scrim: sonst tonaler Schritt, wo die Figur die Hero-Kante schneidet */
+    pointer-events: none;
+    top: 0; right: 0; width: 768px; height: 768px;
+    transform-origin: top right;
+    -webkit-mask-image: linear-gradient(180deg, #000 84%, transparent 99%);
+    mask-image: linear-gradient(180deg, #000 84%, transparent 99%);
+  }
+
+
+  .hero-caption {
+    position: absolute;
+    right: 40px;
+    bottom: 28px;
+    z-index: 3;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--t3);
+    text-shadow: 0 1px 14px rgba(24, 24, 24, 0.8);
+  }
+  @media (max-width: 767px) {
+    /* Natural height on small screens: the centered-flex hero would clip the
+       headline once the text block outgrows the min-height. */
+    .hero { min-height: 0; display: block; padding-block: 120px 88px; }
+    .stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+  #hero-scene-orbit {
+    position: absolute;
+    right: 6vw;
+    top: 50%;
+    transform: translateY(-50%);
+    width: min(56vw, 860px);
+    aspect-ratio: 1 / 1;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .hero-readability {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(24,24,24,.94) 0%, rgba(24,24,24,.72) 40%, rgba(24,24,24,.08) 66%);
+  }
+  main { position: relative; z-index: 2; background:
+    linear-gradient(180deg, rgba(24,24,24,.35) 0px, rgba(24,24,24,.96) 260px, #181818 420px), #181818; }
+  .hero-bg { object-position: 55% 40%; }
+    .hero-fig { height: 62%; right: -16%; opacity: 0.9; }
+    #hero-scene-orbit {
+      width: 88vw;
+      right: 6vw;
     }
-    main { padding: 2rem; }
-    h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; letter-spacing: -0.02em; }
-    p  { margin-top: 1rem; font-size: 1.125rem; color: #a1a1aa; }
-    .mail { display: inline-block; margin-top: 2.5rem; color: #f5f5f4; text-decoration: none;
-            border: 1px solid #3f3f46; border-radius: 999px; padding: 0.75rem 1.5rem; }
-    .mail:hover { background: #1c1c1f; }
-  </style>
+    #hero-scene-orbit {
+      width: 100vw;
+      right: 0;
+      opacity: 0.28;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    main.container, footer.container {
+      max-width: none;
+      width: 100%;
+      margin-left: 0;
+    }
+    .hero-scrim {
+      background:
+        linear-gradient(90deg, rgba(24, 24, 24, 0.82), rgba(24, 24, 24, 0.55)),
+        linear-gradient(0deg, #181818 0%, rgba(24, 24, 24, 0) 30%),
+        linear-gradient(180deg, rgba(24, 24, 24, 0.8) 0%, rgba(24, 24, 24, 0.2) 22%);
+    }
+    .hero-caption { position: static; margin-top: 40px; display: block; }
+  }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--t3);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: 72px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--t1);
+    max-width: 680px;
+    text-wrap: balance;
+    background: linear-gradient(90deg, var(--grad-a), var(--grad-b));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  @supports not (-webkit-background-clip: text) {
+    h1 { background: none; -webkit-text-fill-color: currentColor; }
+  }
+  @media (max-width: 480px) {
+    h1 { font-size: 48px; }
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  /* Hand-lettered signature (illustration-to-vector, potrace fill).
+     On load a soft ink-wipe sweeps across diagonally — the real signature
+     is revealed, never redrawn, so the letterforms stay true. */
+  :root { --sig: #DCC289; }
+  .sig { position: relative; width: min(500px, 80vw); aspect-ratio: 470 / 163; margin-block: 4px 0; }
+  .sig svg { display: block; width: 100%; height: auto; }
+  .sig-fill { position: absolute; inset: 0; color: var(--sig); }
+  html.js .sig:not(.done) .sig-fill {
+    opacity: 0;
+    -webkit-mask-image: linear-gradient(105deg, #000 42%, transparent 57%);
+    mask-image: linear-gradient(105deg, #000 42%, transparent 57%);
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-size: 260% 100%; mask-size: 260% 100%;
+    -webkit-mask-position: 118% 0; mask-position: 118% 0;
+  }
+  html.js .sig .sig-fill {
+    transition:
+      -webkit-mask-position 1150ms cubic-bezier(.3,.5,.15,1),
+      mask-position 1150ms cubic-bezier(.3,.5,.15,1),
+      opacity 180ms linear;
+  }
+  html.js .sig.done .sig-fill {
+    opacity: 1;
+    -webkit-mask-position: -18% 0; mask-position: -18% 0;
+  }
+
+  .lede {
+    margin-top: 28px;
+    max-width: 640px;
+    font-size: 20px;
+    line-height: 30px;
+    font-weight: 500;
+    color: var(--t1);
+    text-wrap: pretty;
+  }
+  .lede-sub {
+    margin-top: 12px;
+    max-width: 640px;
+    text-wrap: pretty;
+  }
+  .contact {
+    margin-top: 40px;
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--t3);
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 12px;
+    row-gap: 8px;
+    align-items: baseline;
+  }
+  .contact .sep { color: var(--t4); }
+  .contact a {
+    color: var(--t2);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 4px;
+    font-variant-numeric: tabular-nums;
+    transition: color 200ms var(--ease), text-decoration-color 200ms var(--ease);
+  }
+  .contact a:hover {
+    color: var(--t1);
+    text-decoration-color: var(--t4);
+  }
+
+  /* Sections — asymmetric editorial grid */
+  main { padding-bottom: 72px; }
+  /* Der goldene Faden — zieht sich scroll-gebunden vom Hero bis zum
+     Anti-Willkür-Eintrag (der rote Faden des CVs). */
+  #roterfaden { display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+  section {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 24px;
+    scroll-margin-top: 64px;
+  }
+  @media (min-width: 768px) {
+    section {
+      grid-template-columns: 180px minmax(0, 1fr);
+      column-gap: 48px;
+    }
+    section + section { margin-top: 64px; }
+  }
+  .sec-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--t3);
+  }
+  @media (min-width: 768px) {
+    .sec-label { position: sticky; top: 64px; align-self: start; }
+  }
+  .sec-body { max-width: 680px; min-width: 0; }
+  .sec-body.wide { max-width: 720px; }
+
+  h2 { font-size: 24px; line-height: 32px; font-weight: 600; color: var(--t1); letter-spacing: -0.01em; }
+  @media (max-width: 767px) {
+    h2 { display: none; }
+  }
+
+  /* Roles */
+  .role {
+    padding-block: 32px;
+    border-top: 1px solid var(--line);
+  }
+  .role:first-of-type { border-top: none; padding-top: 0; }
+  .role-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 16px;
+    row-gap: 4px;
+    justify-content: space-between;
+  }
+  .role h3 {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
+    color: var(--t1);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .dates {
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--t3);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .org {
+    margin-top: 4px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+  }
+  .org .loc { font-weight: 400; color: var(--t3); }
+  .role ul { margin-top: 16px; list-style: none; }
+  .role li {
+    position: relative;
+    padding-left: 16px;
+    text-wrap: pretty;
+  }
+  .role li + li { margin-top: 8px; }
+  .role li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 4px;
+    height: 4px;
+    border-radius: 9999px;
+    background: var(--t4);
+  }
+
+  /* Earlier experience — compact rows */
+  .earlier { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); }
+  .earlier-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--t3);
+  }
+  .earlier-rows { margin-top: 16px; }
+  .earlier-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 16px;
+    row-gap: 2px;
+  }
+  .earlier-row + .earlier-row { margin-top: 12px; }
+  .earlier-row .dates { flex-basis: 150px; }
+  .earlier-row .what { font-weight: 500; color: var(--t2); }
+  .earlier-row .where { color: var(--t3); }
+
+  /* Projects */
+  .proj-intro {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--t3);
+    margin-bottom: 4px;
+  }
+  .status {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--t3);
+    border: 1px solid var(--line);
+    border-radius: 9999px;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+  .proj-tag {
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--t3);
+  }
+  .role > p:not(.proj-tag):not(.org) { margin-top: 12px; text-wrap: pretty; }
+
+  /* Education & languages pairing */
+  .pair { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 40px; }
+  @media (min-width: 768px) {
+    .pair { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); column-gap: 48px; }
+  }
+  .edu + .edu { margin-top: 24px; }
+  .edu .degree { font-weight: 500; color: var(--t1); }
+  .edu .inst { margin-top: 2px; font-size: 14px; line-height: 20px; color: var(--t3); }
+  .edu .dates { margin-top: 4px; display: inline-block; }
+  .lang-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    column-gap: 16px;
+  }
+  .lang-row + .lang-row { margin-top: 12px; }
+  .lang-row .name { color: var(--t1); font-weight: 500; }
+
+  /* Competencies */
+  .skills {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 32px;
+  }
+  @media (min-width: 768px) {
+    .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
+  }
+  .skill-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--t3);
+    margin-bottom: 8px;
+  }
+  .skill-items { font-size: 14px; line-height: 20px; color: var(--t2); }
+  .skill-items .dot { color: var(--t4); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--line);
+    padding-block: 32px 64px;
+  }
+  .foot-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    column-gap: 16px;
+    row-gap: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--t3);
+  }
+  .foot-row a {
+    color: var(--t2);
+    text-decoration: none;
+    transition: color 200ms var(--ease);
+  }
+  .foot-row a:hover { color: var(--t1); }
+
+  /* Scroll reveals — IntersectionObserver in JS; gated on .js so no-JS stays visible.
+     Fast and blur-free on purpose: a professional profile reads immediately. */
+  html.js .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 240ms var(--ease) var(--d, 0ms),
+      transform 240ms var(--ease) var(--d, 0ms);
+  }
+  html.js .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    html.js .nav { transition: none; }
+    html.js .reveal {
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition: none;
+    }
+    .nav a, .contact a, .foot-row a { transition: none; }
+  }
+
+  /* Print — clean paper version of the same document.
+     A4 minus margins lands below the 768px breakpoint, so re-show section
+     headers and retint everything through the custom properties. */
+  @media print {
+    :root {
+      --line: #dddddd;
+      --t1: #111111;
+      --t2: #333333;
+      --t3: #555555;
+      --t4: #999999;
+    }
+    .nav, .noise, .skip-link, .foot-row a, .hero-bg, .stage, #hero-scene-orbit, #companion, .hero-scrim, .hero-caption, #roterfaden, .cv-link { display: none; }
+    body { background: #fff; }
+    h1 { background: none; -webkit-text-fill-color: currentColor; font-size: 32px; }
+    .sig { width: 220px; }
+    .sig-fill { color: #111111; }
+    h2.sec-label { display: block; margin-bottom: 8px; }
+    .lede { font-size: 16px; line-height: 24px; font-weight: 500; } .lede-sub { margin-top: 8px; }
+    .hero { padding-block: 0 24px; }
+    main { padding-bottom: 0; }
+    section { scroll-margin-top: 0; }
+    section + section { margin-top: 32px; }
+    .role { padding-block: 24px; }
+    .role:first-of-type { padding-top: 0; }
+    .sec-label, .role-head { break-after: avoid; break-inside: avoid; }
+    .role, .edu, .lang-row, .earlier, #education { break-inside: avoid; }
+    footer { padding-block: 24px 0; border-top: none; }
+    html.js .reveal, html.js .reveal.is-in {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+</style>
 </head>
-<body>
-  <main>
-    <h1>Hanno Knatz</h1>
-    <p>This site is under construction.</p>
-    <a class="mail" href="mailto:mail@hannoknatz.com">mail@hannoknatz.com</a>
-  </main>
+<body id="top">
+<a class="skip-link" href="#projects">Skip to content</a>
+<div class="noise" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Sections">
+  <a href="#projects" data-spy="projects">Projects</a>
+  <a href="#experience" data-spy="experience">Experience</a>
+  <a href="#skills" data-spy="skills">Skills</a>
+  <a href="#education" data-spy="education">Education</a>
+</nav>
+
+<header class="hero">
+  <div class="stage">
+
+    <div class="stage-scrim" aria-hidden="true"></div>
+    <div class="stage-readability" aria-hidden="true"></div>
+      </div>
+  <div class="hero-copy">
+    <p class="kicker reveal">System Architecture · Scientific Data · Applied AI</p>
+      <div class="sig">
+        <h1 class="sr-only">Hanno Knatz</h1>
+        <svg class="sig-fill" aria-hidden="true" version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="100%" height="100%" viewBox="0 0 470.000000 163.000000"
+ preserveAspectRatio="xMidYMid meet">
+<metadata>
+Created by potrace 1.16, written by Peter Selinger 2001-2019
+</metadata>
+<g transform="translate(0.000000,163.000000) scale(0.100000,-0.100000)"
+fill="currentColor" stroke="none">
+<path d="M2750 1471 c-7 -14 -7 -22 1 -27 24 -14 -19 -206 -103 -462 -33 -101
+-33 -102 -126 -123 -87 -19 -90 -36 -27 -143 25 -42 45 -80 45 -84 0 -4 -25
+-83 -55 -177 -56 -172 -65 -221 -43 -243 24 -24 36 -13 31 31 -4 33 81 338
+101 364 1 1 24 -9 51 -23 105 -54 233 -18 363 101 36 33 62 51 58 40 -31 -75
+-31 -74 -13 -92 16 -16 21 -13 91 55 40 40 78 72 83 72 5 0 19 -22 30 -50 26
+-60 61 -80 99 -55 23 15 25 14 34 -10 14 -37 35 -31 91 27 45 47 49 49 49 26
+0 -35 33 -62 65 -54 33 8 104 73 151 138 41 55 52 57 31 7 -7 -19 -26 -83 -41
+-142 -26 -101 -27 -109 -12 -132 21 -33 51 -34 41 -2 -15 50 15 185 88 394
+l32 93 50 9 c27 6 102 18 165 27 63 9 123 20 134 26 12 6 22 6 29 -1 13 -13
+31 -15 23 -3 -2 4 34 8 81 9 47 1 88 4 91 7 3 4 -5 6 -19 5 -13 0 -91 2 -174
+4 -82 3 -192 1 -244 -4 -99 -10 -111 -8 -92 14 6 8 20 39 30 70 18 53 19 56 2
+71 -26 23 -26 23 -60 -68 -18 -46 -38 -89 -45 -95 -15 -12 -209 -55 -298 -66
+-63 -7 -76 -16 -52 -36 15 -12 154 1 288 28 28 6 29 5 22 -23 -19 -76 -179
+-284 -219 -284 -19 0 -16 37 9 103 16 43 9 63 -33 96 l-26 22 -30 -28 c-16
+-16 -50 -55 -74 -87 -89 -120 -132 -133 -159 -48 -24 74 -50 80 -112 27 -23
+-20 -42 -35 -42 -32 0 2 7 23 15 47 11 30 12 47 5 61 -11 20 -40 26 -40 9 0
+-6 -39 -51 -87 -100 -140 -146 -268 -192 -366 -132 -44 28 -45 37 -15 143 20
+75 23 80 66 105 239 140 570 434 488 434 -7 0 -28 -18 -47 -41 -72 -86 -410
+-339 -453 -339 -5 0 9 51 66 240 90 296 83 265 65 294 -21 31 -42 33 -57 7z
+m790 -630 c0 -14 -101 -141 -112 -141 -13 0 13 40 64 103 40 48 48 54 48 38z
+m-957 -67 l-16 -47 -18 24 c-10 13 -19 27 -19 30 0 4 49 32 67 38 1 1 -5 -20
+-14 -45z"/>
+<path d="M671 1293 c-17 -65 -41 -152 -52 -193 -12 -41 -31 -113 -43 -160
+l-22 -85 -40 -7 c-21 -4 -112 -7 -202 -7 -142 -1 -163 -3 -169 -18 -8 -21 27
+-49 80 -64 144 -39 221 -133 235 -288 5 -53 12 -77 24 -84 22 -14 48 7 48 40
+0 28 49 305 55 311 7 7 27 -10 46 -42 23 -37 25 -27 4 14 -9 17 -13 30 -10 30
+10 0 50 -88 71 -160 29 -94 31 -71 4 29 -23 81 -50 140 -74 160 -25 21 -19 41
+12 41 15 0 67 7 115 15 79 14 89 14 103 0 12 -12 13 -15 2 -15 -20 0 -40 -80
+-25 -99 9 -12 9 -13 0 -7 -9 5 -13 -1 -13 -18 0 -14 -4 -26 -8 -26 -5 0 -9 -6
+-9 -12 -1 -7 -4 -35 -8 -63 -4 -27 -8 -69 -8 -92 -1 -23 -5 -39 -9 -37 -5 3
+-11 -3 -15 -12 -6 -16 -7 -16 -15 2 -7 15 -8 13 -5 -8 3 -17 0 -25 -6 -21 -6
+4 -8 -2 -5 -15 4 -12 2 -22 -2 -22 -5 0 -11 12 -14 27 -23 120 -28 144 -32
+141 -2 -2 1 -31 6 -64 6 -32 17 -110 25 -173 14 -112 32 -161 60 -161 19 0 28
+17 14 26 -23 14 3 256 47 444 14 58 26 114 28 125 1 11 8 34 15 50 7 17 13 38
+14 47 1 9 5 15 9 12 4 -3 45 5 91 17 67 18 83 26 83 41 0 13 -5 17 -16 12 -27
+-11 -139 -28 -145 -22 -4 3 2 28 13 55 10 26 25 66 32 88 17 56 47 124 101
+232 32 65 43 96 37 107 -19 33 -39 16 -74 -61 -19 -43 -39 -87 -44 -98 -16
+-33 -79 -213 -84 -237 -2 -13 -7 -32 -11 -43 -6 -17 -5 -18 5 -5 10 13 11 12
+6 -3 -3 -10 -6 -24 -6 -30 0 -7 -4 -6 -10 3 -8 13 -10 13 -10 -2 0 -9 -8 -19
+-18 -22 -32 -11 -235 -36 -240 -31 -9 9 57 258 99 379 44 122 46 138 23 160
+-26 26 -30 20 -63 -101z m274 -222 c-15 -45 -31 -83 -36 -86 -4 -3 6 35 23 84
+40 111 50 112 13 2z m-307 9 c-5 -17 -7 -37 -4 -46 3 -8 2 -12 -4 -9 -6 3 -11
+3 -11 -2 -1 -4 -3 -17 -5 -28 -6 -37 -22 -97 -28 -102 -11 -11 -6 16 19 113
+14 53 25 98 25 100 0 2 4 4 9 4 6 0 6 -12 -1 -30z m-115 -304 c21 -16 22 -50
+3 -125 -8 -31 -17 -69 -21 -86 l-7 -30 -18 47 c-22 59 -79 137 -128 177 l-37
+30 95 0 c64 0 101 -4 113 -13z"/>
+<path d="M1103 929 c-22 -8 -29 -20 -18 -31 6 -6 110 24 121 35 3 3 -11 1 -31
+-4 -24 -7 -40 -7 -44 -1 -3 6 -15 6 -28 1z"/>
+<path d="M3955 861 c-74 -34 -95 -56 -74 -76 12 -13 22 -10 72 20 120 72 126
+32 13 -94 -36 -40 -66 -81 -66 -91 0 -30 30 -32 69 -6 50 33 78 40 112 26 38
+-16 42 -11 -83 -118 -194 -166 -290 -301 -257 -361 33 -59 129 -19 252 104 53
+54 79 94 40 64 -16 -13 -17 -12 -4 4 8 9 16 15 19 12 10 -9 31 16 25 31 -3 9
+0 14 8 12 19 -4 80 120 83 172 3 40 7 47 37 63 19 10 33 22 31 28 -1 6 2 8 7
+5 5 -4 25 3 43 14 30 18 62 34 125 63 12 5 54 17 95 27 54 13 68 20 54 26 -35
+14 -223 -36 -210 -57 3 -5 -1 -7 -8 -4 -7 3 -53 -15 -102 -39 l-89 -45 -27 20
+c-15 11 -46 23 -69 26 l-42 6 19 21 c47 51 68 136 40 164 -18 18 -47 14 -113
+-17z m170 -328 c-4 -21 -13 -50 -21 -65 -8 -16 -12 -34 -8 -40 5 -7 3 -8 -6
+-3 -10 6 -12 3 -8 -13 5 -16 2 -20 -13 -17 -11 2 -17 0 -14 -6 4 -5 -3 -17
+-15 -27 -11 -9 -22 -25 -24 -35 -2 -19 -60 -83 -90 -99 -13 -7 -16 -7 -12 1
+11 17 0 13 -51 -19 -53 -34 -81 -38 -90 -14 -14 37 83 158 222 277 132 113
+141 117 130 60z m-266 -173 c-35 -38 -65 -70 -68 -70 -6 0 24 35 78 93 68 71
+61 57 -10 -23z"/>
+<path d="M3957 280 c-23 -22 -37 -40 -32 -40 6 0 29 18 50 40 51 52 37 52 -18
+0z"/>
+<path d="M1121 828 c-73 -68 -162 -228 -144 -257 21 -33 45 -24 109 40 64 63
+64 63 64 33 0 -66 48 -71 114 -13 47 42 55 44 34 9 -10 -16 -10 -23 5 -37 16
+-17 21 -14 91 56 75 75 106 87 106 41 0 -24 51 -80 73 -80 8 0 26 9 40 20 31
+25 40 25 32 1 -3 -10 1 -23 8 -30 12 -9 28 3 84 59 38 38 75 70 81 70 6 0 20
+-20 31 -45 27 -61 61 -76 101 -46 l30 22 10 -26 c32 -83 152 -7 167 106 5 32
+10 38 32 41 49 6 31 33 -24 36 -27 2 -55 8 -62 14 -21 17 -39 3 -83 -62 -39
+-58 -94 -104 -114 -97 -6 2 -17 25 -25 53 -21 65 -49 70 -115 20 -47 -36 -57
+-37 -31 -2 19 25 19 41 -1 60 -23 23 -28 20 -48 -24 -16 -36 -98 -120 -118
+-120 -4 0 -19 25 -33 55 -30 70 -59 71 -127 7 -32 -29 -35 -24 -12 19 14 28
+14 33 -1 55 -19 29 -29 25 -55 -25 -18 -37 -123 -141 -141 -141 -14 0 -11 10
+17 67 29 56 27 79 -7 92 -16 5 -19 10 -10 15 9 6 8 13 -5 27 -23 26 -33 24
+-73 -13z m26 -80 c-34 -57 -137 -159 -114 -112 33 66 123 172 135 160 2 -3 -7
+-24 -21 -48z m966 -12 c-36 -64 -83 -97 -83 -58 0 26 56 83 74 76 9 -3 13 -11
+9 -18z"/>
+</g>
+</svg>
+
+      </div>
+      <p class="lede reveal">Hanno Knatz is a technical leader and system architect working across scientific software, data platforms and applied AI. In global pharmaceutical R&amp;D, he led a Lab IT engineering team and owned the architecture and lifecycle of a biological assay analysis platform used across laboratories worldwide.</p>
+      <p class="lede2 reveal">Current independent work focuses on AI agents, local inference and workflow automation.</p>
+      <address class="meta reveal">Mainz, Germany&ensp;·&ensp;<a class="cv-link" href="cv-hanno-knatz.pdf">CV as PDF</a></address>
+  </div>
+  <p class="hero-caption reveal">Level 0 · System Architecture — das erste Treffen</p>
+</header>
+
+<canvas id="hero-scene-orbit" width="1024" height="1024" aria-hidden="true"></canvas>
+<div class="site-readability" aria-hidden="true"></div>
+<canvas id="companion" width="768" height="768" aria-hidden="true" style="display:none"></canvas>
+
+<main class="container">
+
+  <section id="projects" aria-labelledby="projects-h">
+    <h2 id="projects-h" class="sec-label">Selected projects</h2>
+    <div class="sec-body wide">
+      <p class="proj-intro reveal">Independent work since Apr 2026.</p>
+
+      <article class="role reveal">
+        <div class="role-head">
+          <h3>Bullshitbox</h3>
+          <p class="status">Experiment</p>
+        </div>
+        <p class="proj-tag">Computer-use agents</p>
+        <p>Bullshitbox is an experimental platform for computer-use agents — LLM
+        agents that see a screen and operate software. A testbed for building and
+        evaluating agentic workflows with tool integration, retrieval, agent
+        memory and human oversight.</p>
+        <!-- TODO(hanno): add a screenshot or short demo clip, plus a link (demo / repo / write-up) -->
+      </article>
+
+      <article class="role reveal" id="antiwillkuer">
+        <div class="role-head">
+          <h3><a href="levelzero.html" style="color:inherit">Anti-Willkür · Level Zero</a></h3>
+          <p class="status">World building</p>
+        </div>
+        <p class="proj-tag">Interactive fiction · game design · agent architecture · generative art</p>
+        <p>An experiment about artificial worlds: what conditions must a world fulfil so that real
+        development can unfold — and what applies to the one who writes its rules? Told across five
+        documents, a real agent project (Agent 0 / Bullshitbox), and three visual worlds of generated
+        art. The interactive project page opens the search — including a place where the page itself
+        stops prompting you.</p>
+        <p style="margin-top:10px"><a href="levelzero.html" style="font-weight:600">Enter the worlds →</a>
+        <span style="opacity:.45"> · </span>
+        <a href="animationen.html" style="font-weight:600">20 Orbits →</a></p>
+      </article>
+
+      <article class="role reveal" id="ai-lab">
+        <div class="role-head">
+          <h3>AI Lab</h3>
+          <p class="status">Experiment</p>
+        </div>
+        <p class="proj-tag">Local inference · Model APIs · Workflow automation</p>
+        <p>Open-source language models served on local hardware and combined with
+        external model APIs in everyday automation workflows — an architecture
+        driven by privacy, performance and cost rather than defaults. Out of that
+        lab, six products shipped:</p>
+        <ul class="stack-list">
+          <li><span class="stack-name">Solar Whale</span> — records sun and battery,
+          proposes the mining window, executes it: surplus photovoltaic power
+          becomes Bitcoin on own hardware. Deterministic. No cloud. No prayers.</li>
+          <li><span class="stack-name">Bullshitbox</span> — the loop itself:
+          record work, draft plans, replay them, ship only what passes.
+          PASS / FAIL / NEED_HUMAN. No vibes. (Details above.)</li>
+          <li><span class="stack-name">Hefter</span> — photograph a document: OCR reads
+          it, a local LLM classifies it, the record is searchable in seconds and
+          shareable on purpose. Private by architecture, not by policy.</li>
+          <li><span class="stack-name">Viteum</span> — the fitness portal on the same
+          stack: plans, logs and feedback generated locally. Health data never
+          leaves the network.</li>
+          <li><span class="stack-name">Market Bubbles</span> — watches market phases,
+          drafts signals, and only acts on what passes validation. Trading
+          automation with an audit trail, running 24/7 on own infrastructure.</li>
+          <li><span class="stack-name">Kurator</span> — the human-in-the-loop layer
+          of the render pipeline: record the outputs, curate them, replay the
+          winners into films, worlds and web assets. Thousands of images, one
+          workflow.</li>
+        </ul>
+        <p>Every one of them runs on the same architecture — which is exactly the
+        workflow I build for clients: private, fast and owned.</p>
+      </article>
+
+
+      <div class="earlier reveal">
+        <p class="earlier-label">Experiments</p>
+        <div class="earlier-rows">
+          <p class="earlier-row">
+            <span><span class="what">Trading automation · game development · art and visual design with generative AI</span></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience" aria-labelledby="experience-h">
+    <h2 id="experience-h" class="sec-label">Professional experience</h2>
+    <div class="sec-body wide">
+      <article class="role reveal">
+        <div class="role-head">
+          <h3>Associate Director / Team Lead, Lab IT</h3>
+          <p class="dates"><time datetime="2021-12">Dec 2021</time> – <time datetime="2026-03">Mar 2026</time></p>
+        </div>
+        <p class="org">BioNTech SE <span class="loc">· Mainz</span></p>
+        <ul>
+          <li>Led a team of System Engineers delivering software and data analysis solutions for scientific R&amp;D.</li>
+          <li>Defined the system concept and served as System Owner for a biological assay data analysis platform operated across global laboratories, with responsibility for architecture, implementation and lifecycle management.</li>
+          <li>Established the platform as a data provider for a closed molecule optimization loop — assay analysis results feeding directly back into personalized cancer therapy development.</li>
+          <li>Translated scientific and business requirements into technical solutions, coordinating researchers, IT teams and external vendors in a regulated environment.</li>
+        </ul>
+      </article>
+
+      <article class="role reveal">
+        <div class="role-head">
+          <h3>Senior Implementation Analyst</h3>
+          <p class="dates"><time datetime="2018-09">Sep 2018</time> – <time datetime="2021-12">Dec 2021</time></p>
+        </div>
+        <p class="org">Thermo Fisher Scientific <span class="loc">· Dreieich</span></p>
+        <ul>
+          <li>Consulted on and implemented enterprise Laboratory Information Management Systems (LIMS).</li>
+          <li>Analyzed laboratory workflows and translated business requirements into technical solutions.</li>
+          <li>Delivered system configuration, validation and user training.</li>
+        </ul>
+      </article>
+
+      <article class="role reveal">
+        <div class="role-head">
+          <h3>Automation Specialist</h3>
+          <p class="dates"><time datetime="2015-12">Dec 2015</time> – <time datetime="2018-09">Sep 2018</time></p>
+        </div>
+        <p class="org">Roche <span class="loc">· Penzberg</span></p>
+        <ul>
+          <li>Designed and implemented software solutions supporting pharmaceutical production.</li>
+          <li>Developed database logic and reporting services.</li>
+        </ul>
+      </article>
+
+      <article class="role reveal">
+        <div class="role-head">
+          <h3>IT Consultant</h3>
+          <p class="dates"><time datetime="2015-06">Jun 2015</time> – <time datetime="2015-11">Nov 2015</time></p>
+        </div>
+        <p class="org">FERCHAU Engineering <span class="loc">· Munich</span></p>
+        <ul>
+          <li>Contributed to projects automating pharmaceutical documentation.</li>
+        </ul>
+      </article>
+
+      <div class="earlier reveal">
+        <p class="earlier-label">Earlier experience</p>
+        <div class="earlier-rows">
+          <p class="earlier-row">
+            <span class="dates"><time datetime="2014-09">Sep 2014</time> – <time datetime="2015-03">Mar 2015</time></span>
+            <span><span class="what">Master Thesis Student</span> <span class="where">· Roche, Penzberg</span></span>
+          </p>
+          <p class="earlier-row">
+            <span class="dates"><time datetime="2014-01">Jan 2014</time> – <time datetime="2014-08">Aug 2014</time></span>
+            <span><span class="what">Database Administrator</span> <span class="where">· University Medical Center Mainz</span></span>
+          </p>
+          <p class="earlier-row">
+            <span class="dates"><time datetime="2013-09">Sep 2013</time> – <time datetime="2014-01">Jan 2014</time></span>
+            <span><span class="what">Research Assistant</span> <span class="where">· Johannes Gutenberg University Mainz</span></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills" aria-labelledby="skills-h">
+    <h2 id="skills-h" class="sec-label">Core competencies</h2>
+    <div class="sec-body wide">
+      <div class="skills">
+        <div class="reveal">
+          <p class="skill-label">Architecture &amp; Delivery</p>
+          <p class="skill-items">System &amp; Solution Architecture <span class="dot">·</span> System Ownership <span class="dot">·</span> Team &amp; Technical Leadership <span class="dot">·</span> Stakeholder Management <span class="dot">·</span> Lifecycle Management</p>
+        </div>
+        <div class="reveal">
+          <p class="skill-label">Data &amp; Scientific Systems</p>
+          <p class="skill-items">Python <span class="dot">·</span> SQL <span class="dot">·</span> Databricks <span class="dot">·</span> Laboratory Informatics / LIMS <span class="dot">·</span> Scientific Data Management <span class="dot">·</span> Bioinformatics</p>
+        </div>
+        <div class="reveal">
+          <p class="skill-label">AI &amp; Automation</p>
+          <p class="skill-items">Agentic Workflows <span class="dot">·</span> LLM Integration <span class="dot">·</span> Retrieval &amp; Agent Memory <span class="dot">·</span> Local AI Infrastructure <span class="dot">·</span> Workflow Automation</p>
+        </div>
+        <div class="reveal">
+          <p class="skill-label">Governance</p>
+          <p class="skill-items">Regulated Pharmaceutical Environments <span class="dot">·</span> System Validation <span class="dot">·</span> Data Governance</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="education" aria-labelledby="education-h">
+    <h2 id="education-h" class="sec-label">Education &amp; languages</h2>
+    <div class="sec-body wide">
+      <div class="pair">
+        <div class="reveal">
+          <div class="edu">
+            <p class="degree">M.Sc. Applied Bioinformatics</p>
+            <p class="inst">Johannes Gutenberg University Mainz</p>
+            <p class="dates"><time datetime="2012">2012</time> – <time datetime="2015">2015</time></p>
+          </div>
+          <div class="edu">
+            <p class="degree">B.Sc. Biology</p>
+            <p class="inst">Johannes Gutenberg University Mainz</p>
+            <p class="dates"><time datetime="2009">2009</time> – <time datetime="2012">2012</time></p>
+          </div>
+        </div>
+        <div class="reveal">
+          <p class="lang-row"><span class="name">German</span><span class="dates">Native</span></p>
+          <p class="lang-row"><span class="name">English</span><span class="dates">Professional</span></p>
+          <p class="lang-row"><span class="name">Portuguese</span><span class="dates">Intermediate</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<svg id="roterfaden" aria-hidden="true" fill="none"></svg>
+
+<footer class="container">
+  <div class="foot-row reveal">
+    <span>Updated 25 September 2026 · Mainz, Germany</span>
+    <a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Back to top</a>
+  </div>
+</footer>
+
+<script>
+  document.documentElement.classList.add('js');
+
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduced && 'IntersectionObserver' in window) {
+    // Stagger siblings within the same parent so groups enter in sequence
+    var groups = new Map();
+    document.querySelectorAll('.reveal').forEach(function (el) {
+      var parent = el.parentElement;
+      var i = groups.get(parent) || 0;
+      el.style.setProperty('--d', Math.min(i * 40, 120) + 'ms');
+      groups.set(parent, i + 1);
+    });
+
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -5% 0px' });
+
+    document.querySelectorAll('.reveal').forEach(function (el) {
+      revealObserver.observe(el);
+    });
+  }
+
+  /* Signature ink-wipe: reveal the real vector signature with a soft
+     diagonal sweep. No JS / reduced motion → static, fully visible. */
+  (function () {
+    var sig = document.querySelector('.sig');
+    if (!sig) return;
+    if (reduced || !('IntersectionObserver' in window)) { sig.classList.add('done'); return; }
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        setTimeout(function () { sig.classList.add('done'); }, 350);
+      });
+    });
+  })();
+
+  /* Navigation appears only past the hero fold — the hero speaks for itself. */
+  (function () {
+    var nav = document.querySelector('.nav');
+    if (!nav) return;
+    function navUpdate() {
+      var fold = Math.min(window.innerHeight * 0.65, 700);
+      nav.classList.toggle('nav-in', (window.scrollY || window.pageYOffset || 0) > fold);
+    }
+    window.addEventListener('scroll', navUpdate, { passive: true });
+    window.addEventListener('resize', navUpdate, { passive: true });
+    navUpdate();
+  })();
+
+  /* Helix-Begleiter: der SITZENDE LAPTOP-Hanno begleitet den CV — sauberer
+     Kurz-Bogen f061–f066 (frontal am Laptop, keine Morph-Zone), Ping-Pong
+     über den Page-Scroll (Dreieckswelle, kein Schnitt, kein Geisterbild).
+     Hero: groß (0.85vh) und angehoben; als Begleiter kleiner, unten rechts. */
+  (function () {
+    var cv = document.getElementById('companion');
+    if (!cv) return;
+    var ctx = cv.getContext('2d');
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var N = 73;
+    var ARC = []; for (var i = 61; i <= 66; i++) ARC.push(i);
+    var SWEEPS = 4;                      /* Ping-Pong-Durchgänge über die Seite */
+    var frames = new Array(N);
+    var ready = false;
+    var DPR = Math.min(2, window.devicePixelRatio || 1);
+    var BASE = 768;
+    cv.width = BASE * DPR;
+    cv.height = BASE * DPR;
+
+    for (var i = 0; i < N; i++) {
+      (function (i) {
+        var im = new Image();
+        im.onload = function () {
+          frames[i] = im;
+          if (!ready && frames[61] instanceof Image) { ready = true; }
+          update();
+        };
+        im.src = 'assets/levelzero/orbit-laptop/f' + String(i).padStart(3, '0') + '.webp';
+      })(i);
+    }
+
+    function update() {
+      if (!ready) { return; }
+      var vh = window.innerHeight || 1;
+      var doc = document.documentElement.scrollHeight - vh;
+      var p = doc > 0 ? Math.min(1, Math.max(0, (window.scrollY || 0) / doc)) : 0;
+
+      var k = Math.min(1, p / 0.14);
+      var size = (0.85 - 0.51 * k) * vh;           /* 0.85vh (Hero) → 0.34vh */
+      var lift = 0.05 * (1 - k) * vh;              /* im Hero angehoben */
+      var sway = Math.sin(p * Math.PI * 2) * 2.2;  /* vw */
+      var fade = p > 0.95 ? Math.max(0, 1 - (p - 0.95) / 0.05) : 1;
+
+      /* Ping-Pong: Dreieckswelle über den kurzen Bogen — stetig, ohne Schnitt */
+      var prog = p * SWEEPS * 2;
+      var tri = 1 - Math.abs(1 - (prog - Math.floor(prog)));
+      var im = frames[ARC[Math.round(tri * (ARC.length - 1))]];
+
+      cv.style.opacity = fade.toFixed(3);
+      cv.style.transform =
+        'translate(' + (sway * window.innerWidth / 100).toFixed(1) + 'px,' +
+        (vh - size - lift).toFixed(1) + 'px) scale(' + (size / BASE).toFixed(4) + ')';
+
+      ctx.clearRect(0, 0, BASE * DPR, BASE * DPR);
+      if (im) { ctx.drawImage(im, 0, 0, BASE * DPR, BASE * DPR); }
+
+      /* Pose für den roten Faden (Schulter hinten rechts ≈ 0.62/0.30 im Frame) */
+      window.__companionPose = {
+        x: window.innerWidth + sway * window.innerWidth / 100 - size,
+        y: vh - size - lift,
+        s: size / BASE,
+        vis: fade
+      };
+      if (window.__threadReflow) { window.__threadReflow(); }
+    }
+
+    if (!reduced) {
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+    } else {
+      var staticDraw = function () {
+        if (!ready) { setTimeout(staticDraw, 300); return; }
+        var im = frames[63];
+        if (im) { ctx.drawImage(im, 0, 0, BASE * DPR, BASE * DPR); }
+      };
+      staticDraw();
+    }
+    setTimeout(update, 400);
+    setTimeout(update, 1600);
+  })();
+
+
+  /* Der rote Faden: meandert vom Orrery durch den ganzen CV bis zum
+     Anti-Willkür-Eintrag und zeichnet sich scroll-gebunden. */
+  (function () {
+    var svg = document.getElementById('roterfaden');
+    if (!svg) return;
+    var W = 0, H = 0, L = 0, drawTarget = null;
+
+    function antiPoint() {
+      var el = document.getElementById('antiwillkuer');
+      if (!el) return null;
+      var r = el.getBoundingClientRect();
+      var y = r.top + window.scrollY + Math.min(r.height * 0.35, 120);
+      return { x: Math.max(90, r.left + 40), y: y };
+    }
+    /* Faden-Anschluss: hinten an der Schulter des sitzenden Laptop-Hanno
+       (≈ 0.62/0.30 im 768er-Frame), dann RUNTER DEN RÜCKEN: der Faden läuft
+       hinter der Figur (SVG z1 unter dem Companion z3) und taucht unten
+       wieder auf, bevor er nach links in die Gasse schwenkt. */
+    function threadStart() {
+      var pose = window.__companionPose;
+      if (pose && pose.s > 0) {
+        return {
+          x: pose.x + 0.62 * pose.s * 768,
+          y: pose.y + 0.30 * pose.s * 768 + window.scrollY
+        };
+      }
+      return { x: W * 0.78, y: 430 };
+    }
+    function buildPts() {
+      var anti = antiPoint();
+      var st = threadStart();
+      var pose = window.__companionPose;
+      var backDrop = pose ? pose.s * 768 * 0.34 : 260;   /* bis unter den Rücken */
+      var pts = [
+        st,
+        { x: st.x - 14, y: st.y + backDrop * 0.45 },     /* über den Bogen des Rückens */
+        { x: st.x - 30, y: st.y + backDrop },            /* unten am Rücken, taucht wieder auf */
+        { x: st.x - 90, y: st.y + backDrop + 60 },       /* zum Boden nach links */
+        { x: W * 0.62, y: H * 0.145 },
+        { x: W * 0.13, y: H * 0.235 },
+        { x: W * 0.16, y: H * 0.42 },
+        { x: W * 0.10, y: H * 0.56 },
+        { x: W * 0.15, y: H * 0.70 }
+      ];
+      if (anti) { pts.push({ x: anti.x + 40, y: anti.y - 46 }); pts.push(anti); }
+      return pts;
+    }
+    function catmull(pts) {
+      // smooth path through points (centripetal-ish, simple midpoint beziers)
+      var d = 'M' + pts[0].x.toFixed(1) + ' ' + pts[0].y.toFixed(1);
+      for (var i = 1; i < pts.length - 1; i++) {
+        var mx = (pts[i].x + pts[i+1].x) / 2, my = (pts[i].y + pts[i+1].y) / 2;
+        d += ' Q' + pts[i].x.toFixed(1) + ' ' + pts[i].y.toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1);
+      }
+      var l = pts[pts.length-1];
+      d += ' L' + l.x.toFixed(1) + ' ' + l.y.toFixed(1);
+      return d;
+    }
+    function build() {
+      W = document.documentElement.clientWidth;
+      H = document.documentElement.scrollHeight;
+      svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+      svg.style.height = H + 'px';
+      var d = catmull(buildPts());
+      var defs = '<defs>'
+        + '<linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">'
+        + '<stop offset="0" stop-color="#E8C57A"/><stop offset="0.5" stop-color="#C9A227"/><stop offset="1" stop-color="#8f6f1d"/>'
+        + '</linearGradient></defs>';
+      svg.innerHTML = defs
+        + '<path id="rf-glow" d="' + d + '" stroke="rgba(201,162,39,0.16)" stroke-width="6"/>'
+        + '<path id="rf-main" d="' + d + '" stroke="url(#tg)" stroke-width="1.6" opacity="0.55"/>'
+        + '<path id="rf-stitch" d="' + d + '" stroke="#F3E3B0" stroke-width="2.4" stroke-dasharray="2 7" opacity="0.35"/>';
+      var main = document.getElementById('rf-main');
+      try { L = main.getTotalLength(); main.style.strokeDasharray = L + ' ' + L; main.style.strokeDashoffset = L; } catch (e) { L = 0; }
+      var anti = antiPoint();
+      drawTarget = anti ? anti.y : H;
+    }
+    /* Pfad neu spannen, ohne die Layer neu zu bauen — der Startpunkt folgt
+       scroll-gebunden der Schulter der (fixen) Begleiter-Figur. */
+    function reflow() {
+      if (!L) return;
+      var d = catmull(buildPts());
+      var g = document.getElementById('rf-glow'),
+          m = document.getElementById('rf-main'),
+          s = document.getElementById('rf-stitch');
+      if (!g || !m || !s) return;
+      g.setAttribute('d', d); m.setAttribute('d', d); s.setAttribute('d', d);
+      try {
+        L = m.getTotalLength();
+        m.style.strokeDasharray = L + ' ' + L;
+      } catch (e) { return; }
+    }
+    function update() {
+      if (!L) return;
+      var anti = document.getElementById('antiwillkuer');
+      if (!anti) return;
+      var r = anti.getBoundingClientRect();
+      var finish = r.top + window.scrollY - window.innerHeight * 0.35;
+      var p = Math.min(1, Math.max(0, window.scrollY / Math.max(1, finish)));
+      document.getElementById('rf-main').style.strokeDashoffset = (L * (1 - p)).toFixed(1);
+      document.getElementById('rf-stitch').style.strokeDashoffset = (L * (1 - p) * 0.996).toFixed(1);
+    }
+    var rT = null;
+    function queue() { if (rT) return; rT = requestAnimationFrame(function () { rT = null; reflow(); update(); }); }
+    if (reduced) {
+      build();
+      document.getElementById('rf-main').style.strokeDashoffset = 0;
+      document.getElementById('rf-stitch').style.strokeDashoffset = 0;
+      window.addEventListener('resize', function () { L = 0; build(); }, { passive: true });
+      return;
+    }
+    build(); queue();
+    window.__threadReflow = queue;   /* der Companion nagt den Faden nach, wenn seine Pose erstmals steht */
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', function () { L = 0; build(); queue(); }, { passive: true });
+  })();
+
+  if ('IntersectionObserver' in window) {
+    var links = {};
+    document.querySelectorAll('.nav a[data-spy]').forEach(function (a) {
+      links[a.getAttribute('data-spy')] = a;
+    });
+    var spyObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = links[entry.target.id];
+        if (!link) return;
+        if (entry.isIntersecting) {
+          Object.values(links).forEach(function (a) { a.removeAttribute('aria-current'); });
+          link.setAttribute('aria-current', 'true');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    Object.keys(links).forEach(function (id) {
+      var sec = document.getElementById(id);
+      if (sec) spyObserver.observe(sec);
+    });
+  }
+
+  /* Hero diorama parallax — the hall sinks with the scroll (depth 0.5) while
+     the figure lingers (depth 0.15): he steps out of the painting toward the
+     viewer. Monotonic order, passive listener + rAF lerp, clamp at 350px. */
+  (function () {
+    if (reduced) return;
+    var hero = document.querySelector('.hero');
+    if (!hero) return;
+    var layers = [].slice.call(hero.querySelectorAll('[data-depth]'));
+    var target = 0, current = 0, raf = null;
+    function tick() {
+      current += (target - current) * 0.14;
+      if (Math.abs(target - current) < 0.05) current = target;
+      var t = Math.min(current / 350, 1);
+      layers.forEach(function (el) {
+        var d = parseFloat(el.getAttribute('data-depth')) || 0;
+        var s = parseFloat(el.getAttribute('data-scale')) || 0;
+        el.style.transform = 'translate3d(0,' + (current * d).toFixed(2) + 'px,0) scale(' + (1 + t * s).toFixed(4) + ')';
+      });
+      if (Math.abs(target - current) >= 0.05) { raf = requestAnimationFrame(tick); } else { raf = null; }
+    }
+    function queue() {
+      target = Math.min(window.scrollY || window.pageYOffset, 350);
+      if (raf === null) raf = requestAnimationFrame(tick);
+    }
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue, { passive: true });
+    queue();
+  })();
+</script>
+
+<script>
+  /* Hero-Orbit FINAL: ca. 110-Grad-Bogen auf der VORDERSEITE (rueckwaerts durch
+     f072 -> f049, Gesicht immer sichtbar), Lerp-Glaettung, Ease-Out,
+     langsamer Push-in; Copy fhrt weich mit raus. */
+  var N = 73;
+  var ARC = []; for (var i = 0; i < N; i++) ARC.push(i);
+  var scene = { cv: document.getElementById('hero-scene-orbit'), ctx: null, frames: {}, loaded: 0 };
+  var copyEl = document.getElementById('stage-copy');
+  var heroP = 0;
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (scene.cv) scene.ctx = scene.cv.getContext('2d');
+  for (var k = 0; k < ARC.length; k++) {
+    (function (idx, fileIdx) {
+      var im = new Image();
+      im.onload = function () { scene.frames[idx] = im; scene.loaded++; drawHero(); };
+      im.src = 'assets/hero-orbit-frames/f' + String(fileIdx).padStart(3, '0') + '.webp';
+    })(k, ARC[k]);
+  }
+  var total = ARC.length;
+  function drawHero() {
+    if (!scene.cv || scene.loaded < total) return;
+    var cv = scene.cv, ctx = scene.ctx;
+    var vw = cv.clientWidth || innerWidth, vh = cv.clientHeight || innerHeight;
+    if (cv.width !== vw || cv.height !== vh) { cv.width = vw; cv.height = vh; }
+    var pe = 1 - Math.pow(1 - heroP, 2);            /* Ease-Out */
+    var idx = Math.min(total - 1, Math.round(pe * (total - 1)));
+    var im = scene.frames[idx];
+    if (!im) return;
+    var zoom = 1 + 0.06 * pe;
+    var s = Math.max(vw / im.width, vh / im.height) * zoom;
+    var dw = im.width * s, dh = im.height * s;
+    ctx.clearRect(0, 0, vw, vh);
+    ctx.drawImage(im, (vw - dw) * 0.62, (vh - dh) * 0.30, dw, dh);
+    /* Copy bleibt stehen: HIER bin ich. */
+  }
+  if (reducedMotion) {
+    var boot = setInterval(function () {
+      if (scene.loaded >= total) { clearInterval(boot); drawHero(); }
+    }, 150);
+  } else {
+    (function loop() {
+      var vh = innerHeight;
+      var target = Math.min(1, Math.max(0, scrollY / (vh * 1.4)));
+      heroP += (target - heroP) * 0.10;
+      if (Math.abs(target - heroP) < 0.0004) heroP = target;
+      drawHero();
+      requestAnimationFrame(loop);
+    })();
+  }
+</script>
 </body>
 </html>
