@@ -1,1 +1,89 @@
 .agent.md
+
+# macOS and local editor metadata
+.DS_Store
+.zcodeignore
+
+# Local project notes and source material (not for the public website)
+HANDOFF*.md
+profile.md
+
+# Render sources, reviews and working variants
+artifacts/
+renders/
+variants/
+variants.html
+redesign.html
+orbit-preview.html
+die_eine.html
+
+# Generated local outputs
+tmp/
+output/
+
+# Assets are opt-in: only files used by the production pages are versioned.
+assets/*
+
+# Main scroll-driven hero
+!assets/abyss-orbit/
+assets/abyss-orbit/*
+!assets/abyss-orbit/*.webp
+
+# Level Zero page and its two animated sequences
+!assets/levelzero/
+assets/levelzero/*
+!assets/levelzero/bird-orbit/
+assets/levelzero/bird-orbit/*
+!assets/levelzero/bird-orbit/*.webp
+!assets/levelzero/orbit-laptop/
+assets/levelzero/orbit-laptop/*
+!assets/levelzero/orbit-laptop/*.webp
+!assets/levelzero/empty_grid.jpg
+!assets/levelzero/hy_glashueter.webp
+!assets/levelzero/hy_perlenaustern.webp
+!assets/levelzero/hy_polierer.webp
+!assets/levelzero/l0_archive.jpg
+!assets/levelzero/l0_blume.jpg
+!assets/levelzero/l0_god.jpg
+!assets/levelzero/l0_god_console.jpg
+!assets/levelzero/l0_haenden.jpg
+!assets/levelzero/l0_key.jpg
+!assets/levelzero/l0_sanduhren.jpg
+!assets/levelzero/l0_scientists_hall.jpg
+!assets/levelzero/l0_stillstand_ball.jpg
+!assets/levelzero/l0_weberin.jpg
+!assets/levelzero/l0_worldmap.jpg
+!assets/levelzero/w_asche.jpg
+!assets/levelzero/w_bibliothek.jpg
+!assets/levelzero/w_draht.jpg
+!assets/levelzero/w_facet.jpg
+!assets/levelzero/w_lichtung.jpg
+!assets/levelzero/w_nebel.jpg
+!assets/levelzero/w_perle.jpg
+!assets/levelzero/w_see.jpg
+!assets/levelzero/w_spiegel.jpg
+!assets/levelzero/w_uhr.jpg
+
+# Curated orbit gallery
+!assets/orbits/
+assets/orbits/*
+!assets/orbits/uhr_photo.webp
+!assets/orbits/uhr_illu.webp
+!assets/orbits/laptop_uhr.webp
+!assets/orbits/laptop_sec.webp
+!assets/orbits/h_sec_char02.webp
+!assets/orbits/h_sec_char04.webp
+!assets/orbits/h_sec_char06.webp
+!assets/orbits/h_sec_char08.webp
+!assets/orbits/h_sec_char10.webp
+!assets/orbits/h_sec_char13.webp
+!assets/orbits/h_sec_char16.webp
+!assets/orbits/h_sec_char18.webp
+!assets/orbits/h_w_char03.webp
+!assets/orbits/h_w_char05.webp
+!assets/orbits/h_w_char07.webp
+!assets/orbits/h_w_char08.webp
+!assets/orbits/h_w_char10.webp
+!assets/orbits/h_w_char14.webp
+!assets/orbits/h_w_char15.webp
+!assets/orbits/h_w_char19.webp

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Die Kästen — Hanno Knatz</title>
+<meta name="description" content="Ein Vogel, als 360°-Orbit hochauflösend generiert — in die Kästen der Wand gestellt. Beim Scrollen drehen sich alle. Bis auf einen.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0908;
+    --ivory: #EDE4CC;
+    --t3: rgba(237, 228, 204, 0.45);
+    --gold-soft: #E4D5A4;
+    --mono: "Geist Mono", ui-monospace, monospace;
+    --disp: "Cinzel", serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--ink); color: var(--ivory); font-family: "Manrope", ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  ::selection { background: rgba(201,162,39,.3); }
+  a { color: inherit; }
+  .back {
+    position: fixed; top: 22px; left: 26px; z-index: 50;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: rgba(237,228,204,.55); mix-blend-mode: difference;
+  }
+  .back:hover { color: #fff; }
+  .head { padding: 15vh 24px 6vh; text-align: center; position: relative; z-index: 3; }
+  .head h1 { font-family: var(--disp); font-weight: 400; font-size: clamp(30px, 4.4vw, 54px); letter-spacing: .05em; }
+  .head .sub { margin-top: 14px; font-family: var(--mono); font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--t3); }
+  .head .story { margin-top: 24px; max-width: 600px; margin-inline: auto; color: rgba(237,228,204,.72); font-size: 15px; line-height: 1.75; }
+
+  .frame-wrap { position: relative; width: 100vw; }
+  .frame {
+    position: relative; width: 100%; aspect-ratio: 16 / 9;
+    border-top: 1px solid rgba(201,162,39,.35);
+    border-bottom: 1px solid rgba(201,162,39,.35);
+    overflow: hidden;
+    background: #0d0c0a;
+  }
+  .frame > img.base { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  .caption { text-align: center; padding: 10vh 24px 16vh; }
+  .caption .q { font-family: var(--disp); font-size: clamp(20px, 3vw, 32px); color: var(--gold-soft); letter-spacing: .04em; }
+  .caption .mono { margin-top: 22px; font-family: var(--mono); font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--t3); }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* statisch: Vögel auf gemischten Phasen, kein Scrub */
+  }
+</style>
+</head>
+<body>
+
+<a class="back" href="levelzero.html">← Anti-Willkür</a>
+
+<header class="head">
+  <div>
+    <h1>Die Kästen</h1>
+    <p class="sub">Ein Vogel · 360° hochauflösend · in jede Nische gestellt</p>
+    <p class="story">Ein und derselbe Vogel — als 360°-Orbit generiert — sitzt in jeder Nische
+    der Wand, jeder in einer anderen Drehphase. Beim Scrollen drehen sich alle.
+    Bis auf einen.</p>
+  </div>
+</header>
+
+<div class="frame-wrap">
+  <div class="frame">
+    <img class="base" src="assets/levelzero/empty_grid.jpg" alt="Das leere Ornamentgitter der Vogelwand">
+    <canvas id="kaesten"></canvas>
+  </div>
+</div>
+
+<div class="caption">
+  <p class="q">Alle drehen sich. Einer steht.</p>
+  <p class="mono">Level Null · nach krea2-muse_08040</p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var N = 73;
+  var CELLS = [{"x0": 0.0, "x1": 0.0586, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 0}, {"x0": 0.0621, "x1": 0.1316, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 1}, {"x0": 0.1352, "x1": 0.2047, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 2}, {"x0": 0.2082, "x1": 0.2781, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 3}, {"x0": 0.282, "x1": 0.3504, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 4}, {"x0": 0.3555, "x1": 0.4246, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 5}, {"x0": 0.4281, "x1": 0.4973, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 6}, {"x0": 0.5008, "x1": 0.5699, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 7}, {"x0": 0.5738, "x1": 0.643, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 8}, {"x0": 0.6469, "x1": 0.7141, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 9}, {"x0": 0.7195, "x1": 0.7875, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 10}, {"x0": 0.793, "x1": 0.8609, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 11}, {"x0": 0.866, "x1": 0.934, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 12}, {"x0": 0.9387, "x1": 1.0, "y0": 0.3736, "y1": 0.625, "row": "A", "col": 13}, {"x0": 0.0, "x1": 0.0586, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 0}, {"x0": 0.0621, "x1": 0.1316, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 1}, {"x0": 0.1352, "x1": 0.2047, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 2}, {"x0": 0.2082, "x1": 0.2781, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 3}, {"x0": 0.282, "x1": 0.3504, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 4}, {"x0": 0.3555, "x1": 0.4246, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 5}, {"x0": 0.4281, "x1": 0.4973, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 6}, {"x0": 0.5008, "x1": 0.5699, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 7}, {"x0": 0.5738, "x1": 0.643, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 8}, {"x0": 0.6469, "x1": 0.7141, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 9}, {"x0": 0.7195, "x1": 0.7875, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 10}, {"x0": 0.793, "x1": 0.8609, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 11}, {"x0": 0.866, "x1": 0.934, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 12}, {"x0": 0.9387, "x1": 1.0, "y0": 0.7201, "y1": 0.9694, "row": "B", "col": 13}];
+  var STATIC_CELL = { row: 1, col: 6 };  // Mitte der großen mittleren Reihe
+
+  var canvas = document.getElementById('kaesten');
+  var ctx = canvas.getContext('2d');
+  var frames = new Array(N);
+  var loaded = 0;
+  var gridImg = new Image();
+  var gridReady = false;
+  var W = 0, H = 0;
+
+  gridImg.onload = function () { gridReady = true; };
+  gridImg.src = 'assets/levelzero/empty_grid.jpg';
+
+  for (var i = 0; i < N; i++) {
+    (function (i) {
+      var im = new Image();
+      im.onload = function () { frames[i] = im; loaded++; };
+      im.src = 'assets/levelzero/bird-orbit/f' + String(i).padStart(3, '0') + '.webp';
+    })(i);
+  }
+
+  function draw() {
+    if (!gridReady) { requestAnimationFrame(draw); return; }
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var rect = canvas.getBoundingClientRect();
+    var w = Math.round(rect.width * dpr), h = Math.round(rect.height * dpr);
+    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+    W = w; H = h;
+    var scrollMax = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+    var p = Math.min(1, Math.max(0, (window.scrollY || 0) / scrollMax));
+    var sweep = p * (N - 1);
+
+    ctx.drawImage(gridImg, 0, 0, W, H);
+
+    // Schatten-Bänder über die Krallen-Zonen der Sitzstangen
+    ctx.fillStyle = 'rgba(10, 9, 8, 0.5)';
+    ctx.fillRect(0, H * 0.625, W, H * 0.075);
+    ctx.fillRect(0, H * 0.885, W, H * 0.05);
+
+    for (var k = 0; k < CELLS.length; k++) {
+      var c = CELLS[k];
+      var isStatic = (c.row === STATIC_CELL.row && c.col === STATIC_CELL.col);
+      var wave = ((c.row === 'B' ? 1 : 0) + c.col) % 4;
+      var phase = isStatic ? 0 : Math.round((sweep + wave * 5) % N);
+      var fr = frames[phase];
+      if (!fr) continue;
+      var dw = (c.x1 - c.x0) * W, dh = (c.y1 - c.y0) * H;
+      var dx = c.x0 * W, dy = c.y0 * H;
+      // warmer Backlight in jeder Zelle (Kerzenlicht im Kasten)
+      var glow = ctx.createRadialGradient(dx + dw/2, dy + dh*0.5, 0, dx + dw/2, dy + dh*0.5, dw*1.2);
+      glow.addColorStop(0, 'rgba(228, 213, 164, 0.45)');
+      glow.addColorStop(0.4, 'rgba(201, 162, 39, 0.22)');
+      glow.addColorStop(1, 'rgba(10, 9, 8, 0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(dx, dy, dw, dh);
+      // Vogel
+      ctx.drawImage(fr, 130, 15, 512, 753, dx, dy, dw, dh);
+    }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

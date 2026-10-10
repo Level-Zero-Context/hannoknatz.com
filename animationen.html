@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbits — 20 Umdrehungen · Hanno Knatz</title>
+<meta name="description" content="20 Orbit-Animationen: volle 360°-Umläufe um Hanno und die Hybride der Welten — generiert mit der MiniMax-H3-360-Orbit-LoRA.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Manrope:wght@400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0908;
+    --ivory: #EDE4CC;
+    --t3: rgba(237, 228, 204, 0.45);
+    --gold: #C9A227;
+    --gold-soft: #E4D5A4;
+    --mono: "Geist Mono", ui-monospace, monospace;
+    --disp: "Cinzel", serif;
+    --sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--ink); color: var(--ivory); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  ::selection { background: rgba(201,162,39,.3); }
+  a { color: inherit; }
+  .back {
+    position: fixed; top: 22px; left: 26px; z-index: 50;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: rgba(237,228,204,.55); mix-blend-mode: difference;
+  }
+  .back:hover { color: #fff; }
+  .head { min-height: 38vh; display: grid; place-items: center; text-align: center; padding: 0 24px;
+          background: radial-gradient(90% 70% at 50% 115%, rgba(201,162,39,.10), transparent 70%); }
+  .head h1 { font-family: var(--disp); font-weight: 400; font-size: clamp(30px, 4.6vw, 56px); letter-spacing: .05em; }
+  .head .sub { margin-top: 14px; font-family: var(--mono); font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--t3); }
+  .head .story { margin-top: 24px; max-width: 640px; color: rgba(237,228,204,.72); font-size: 15px; line-height: 1.75; }
+  .grid {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px; max-width: 1360px; margin: 0 auto; padding: 4vh 28px 14vh;
+  }
+  .cell { position: relative; }
+  .cell img { width: 100%; height: auto; display: block; border-radius: 4px; }
+  .cell .lab {
+    margin-top: 12px; font-family: var(--mono); font-size: 11px;
+    letter-spacing: .22em; text-transform: uppercase; color: var(--t3);
+    display: flex; justify-content: space-between;
+  }
+  .cell.hero-row { grid-column: 1 / -1; }
+  .duo { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 28px; }
+  .divider {
+    grid-column: 1 / -1; display: flex; align-items: center; gap: 20px;
+    margin: 3vh 0 1vh; font-family: var(--mono); font-size: 11px;
+    letter-spacing: .3em; text-transform: uppercase; color: var(--t3);
+  }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: rgba(237,228,204,.18); }
+  @media (max-width: 760px) {
+    .grid { grid-template-columns: 1fr; }
+    .duo { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    /* animate webp laufen weiter; wer sie stoppen will, pausiert im Browser */
+  }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">← hannoknatz.com</a>
+
+<header class="head">
+  <div>
+    <h1>Orbits</h1>
+    <p class="sub">20 Umdrehungen · 360° · MiniMax-H3-Orbit-LoRA</p>
+    <p class="story">Jede Animation ist ein voller 360°-Kamera-Umlauf um eine Figur —
+    erzeugt mit derselben Kette wie die drehende Figur auf der Startseite.
+    Oben das Paar: der fotoreale Hanno und sein illustriertes Ich — auf der
+    Startseite überblenden sie sich beim Drehen.</p>
+  </div>
+</header>
+
+<main class="grid">
+
+  <div class="divider">Hanno — der Übergang</div>
+
+  <figure class="cell hero-row">
+    <div class="duo">
+      <div>
+        <img src="assets/orbits/uhr_photo.webp" alt="Orbit: fotorealistischer Hanno mit dem goldenen Orb in der Uhrwelt" loading="lazy">
+        <div class="lab"><span>fotorealistisch</span><span>360°</span></div>
+      </div>
+      <div>
+        <img src="assets/orbits/uhr_illu.webp" alt="Orbit: illustrierter Hanno als Filament-Wesen mit dem goldenen Orb" loading="lazy">
+        <div class="lab"><span>illustriert</span><span>360°</span></div>
+      </div>
+    </div>
+    <div class="lab" style="margin-top:14px"><span>Level 1 — Uhrwelt</span><span>Startseite: der Übergang beim Scrollen</span></div>
+  </figure>
+
+  <div class="divider">Hanno — andere Kontexte</div>
+
+  <figure class="cell">
+    <img src="assets/orbits/laptop_uhr.webp" alt="Orbit: Hanno arbeitet am Laptop in der Uhrwelt" loading="lazy">
+    <div class="lab"><span>am Laptop — Uhrwelt</span><span>360°</span></div>
+  </figure>
+
+  <figure class="cell">
+    <img src="assets/orbits/laptop_sec.webp" alt="Orbit: Hanno arbeitet am Laptop in der Secession" loading="lazy">
+    <div class="lab"><span>am Laptop — Secession</span><span>360°</span></div>
+  </figure>
+
+  <div class="divider">Die Hybride der Welten</div>
+
+  <figure class="cell">
+    <img src="assets/orbits/h_sec_char02.webp" alt="Orbit: Hybrid-Wesen aus der Secession" loading="lazy">
+    <div class="lab"><span>Wesen — Secession 02</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_sec_char04.webp" alt="Orbit: Hybrid-Wesen aus der Secession" loading="lazy">
+    <div class="lab"><span>Wesen — Secession 04</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_sec_char06.webp" alt="Orbit: Hybrid-Wesen aus der Secession" loading="lazy">
+    <div class="lab"><span>Wesen — Secession 06</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_sec_char08.webp" alt="Orbit: Hybrid-Wesen aus der Secession" loading="lazy">
+    <div class="lab"><span>Wesen — Secession 08</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_sec_char10.webp" alt="Orbit: Hybrid-Wesen aus der Secession" loading="lazy">
+    <div class="lab"><span>Wesen — Secession 10</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_sec_char13.webp" alt="Orbit: Hybrid-Wesen aus der Secession" loading="lazy">
+    <div class="lab"><span>Wesen — Secession 13</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_sec_char16.webp" alt="Orbit: Hybrid-Wesen aus der Secession" loading="lazy">
+    <div class="lab"><span>Wesen — Secession 16</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_sec_char18.webp" alt="Orbit: Hybrid-Wesen aus der Secession" loading="lazy">
+    <div class="lab"><span>Wesen — Secession 18</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_w_char03.webp" alt="Orbit: Hybrid-Wesen aus den Welten" loading="lazy">
+    <div class="lab"><span>Wesen — Welten 03</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_w_char05.webp" alt="Orbit: Hybrid-Wesen aus den Welten" loading="lazy">
+    <div class="lab"><span>Wesen — Welten 05</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_w_char07.webp" alt="Orbit: Hybrid-Wesen aus den Welten" loading="lazy">
+    <div class="lab"><span>Wesen — Welten 07</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_w_char08.webp" alt="Orbit: Hybrid-Wesen aus den Welten" loading="lazy">
+    <div class="lab"><span>Wesen — Welten 08</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_w_char10.webp" alt="Orbit: Hybrid-Wesen aus den Welten" loading="lazy">
+    <div class="lab"><span>Wesen — Welten 10</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_w_char14.webp" alt="Orbit: Hybrid-Wesen aus den Welten" loading="lazy">
+    <div class="lab"><span>Wesen — Welten 14</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_w_char15.webp" alt="Orbit: Hybrid-Wesen aus den Welten" loading="lazy">
+    <div class="lab"><span>Wesen — Welten 15</span><span>360°</span></div>
+  </figure>
+  <figure class="cell">
+    <img src="assets/orbits/h_w_char19.webp" alt="Orbit: Hybrid-Wesen aus den Welten" loading="lazy">
+    <div class="lab"><span>Wesen — Welten 19</span><span>360°</span></div>
+  </figure>
+
+</main>
+</body>
+</html>

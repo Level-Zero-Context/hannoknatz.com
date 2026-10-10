@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anti-Willkür — Hanno Knatz</title>
+<meta name="description" content="Anti-Willkür / Level Zero — eine Reise durch künstliche Welten. Ein Experiment, keine Antwort.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Manrope:wght@400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #12110e;
+    --ink: #0a0908;
+    --ivory: #EDE4CC;
+    --t2: rgba(237, 228, 204, 0.72);
+    --t3: rgba(237, 228, 204, 0.45);
+    --gold: #C9A227;
+    --gold-soft: #E4D5A4;
+    --ease: cubic-bezier(0.32, 0.72, 0, 1);
+    --sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+    --disp: "Cinzel", serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--ink); color: var(--ivory); font-family: var(--sans); line-height: 1.7; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  ::selection { background: rgba(201,162,39,.3); }
+  a { color: inherit; text-decoration: none; opacity: .6; transition: opacity .4s; }
+  a:hover { opacity: 1; }
+
+  .back {
+    position: fixed; top: 22px; left: 26px; z-index: 50;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: rgba(237,228,204,.55); mix-blend-mode: difference;
+  }
+  .back:hover { color: #fff; }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; min-height: 100vh; display: grid; place-items: center; overflow: hidden;
+          background: radial-gradient(110% 80% at 50% 115%, #211d14 0%, var(--bg) 48%, var(--ink) 100%); }
+  #seed { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero-inner { position: relative; z-index: 2; text-align: center; padding: 0 24px; }
+  .hero h1 { font-family: var(--disp); font-weight: 400; font-size: clamp(40px, 7.4vw, 96px); letter-spacing: .04em; line-height: 1.1; }
+  .hero .line { margin-top: 18px; font-family: var(--disp); font-size: clamp(17px, 2.4vw, 27px); color: var(--gold-soft); letter-spacing: .06em; }
+  .hero .whisper { margin-top: 46px; font-family: var(--mono); font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--t3); }
+  .scroll { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 2;
+            font-family: var(--mono); font-size: 10px; letter-spacing: .32em; color: rgba(237,228,204,.35); text-transform: uppercase; }
+  .scroll::after { content: ""; position: absolute; left: 50%; top: 26px; width: 1px; height: 40px;
+                   background: linear-gradient(rgba(201,162,39,.8), transparent); animation: drip 2.6s var(--ease) infinite; }
+  @keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 60% { transform: scaleY(1); transform-origin: top; } 100% { opacity: 0; } }
+
+  /* ---------- Szenen ---------- */
+  .scene { position: relative; height: 112vh; overflow: hidden; }
+  .scene .ph { position: absolute; inset: -14% 0; will-change: transform; }
+  .scene .ph img { width: 100%; height: 100%; object-fit: cover; }
+  .scene::after { content: ""; position: absolute; inset: 0;
+                  background: linear-gradient(to bottom, var(--ink) 0%, rgba(10,9,8,.18) 22%, rgba(10,9,8,.18) 72%, var(--ink) 100%); }
+  .scene .words {
+    position: absolute; z-index: 2; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(760px, 86vw); text-align: center;
+    opacity: 0; transition: opacity 1.6s var(--ease), transform 1.6s var(--ease);
+  }
+  .scene.in .words { opacity: 1; transform: translate(-50%, calc(-50% - 10px)); }
+  .words .q { font-family: var(--disp); font-size: clamp(21px, 3.1vw, 36px); line-height: 1.42; color: var(--ivory);
+              text-shadow: 0 2px 30px rgba(0,0,0,.55); text-wrap: balance; }
+  .words .c { margin-top: 16px; font-size: 15px; color: var(--t2); text-shadow: 0 1px 18px rgba(0,0,0,.6); }
+  .words .mono { font-family: var(--mono); font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--t3); }
+  .words.gold .q { color: var(--gold-soft); }
+
+  /* ---------- Stille (Level-2-Pause) ---------- */
+  .silence { position: relative; height: 240vh; background: var(--ink); }
+  .silence .hold { position: sticky; top: 0; height: 100vh; display: grid; place-items: center; text-align: center; }
+  .silence .s-line {
+    max-width: 720px; padding: 0 26px; opacity: 0; transform: translateY(18px);
+    transition: opacity 2.2s var(--ease), transform 2.2s var(--ease);
+  }
+  .silence .s-line .mono { font-family: var(--mono); font-size: 11px; letter-spacing: .32em; text-transform: uppercase; color: var(--t3); }
+  .silence .s-line .big { margin-top: 20px; font-family: var(--disp); font-size: clamp(24px, 3.6vw, 40px); line-height: 1.4; color: var(--ivory); }
+  .silence .s-line .after { margin-top: 22px; font-size: 15px; color: var(--t3); }
+
+  /* ---------- Reise durch die Welten ---------- */
+  .travel { position: relative; height: 640vh; }
+  .travel .hold { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  .travel .hold img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+                      opacity: 0; transform: scale(1.07); transition: opacity 1.1s linear; will-change: opacity; }
+  .travel .hold img.on { opacity: 1; transform: scale(1); transition: opacity 1.1s linear, transform 9s linear; }
+  .travel .hold::after { content: ""; position: absolute; inset: 0;
+                         background: linear-gradient(to bottom, var(--ink) 0%, rgba(10,9,8,0) 14%, rgba(10,9,8,0) 86%, var(--ink) 100%); }
+  .travel .t-word {
+    position: absolute; z-index: 3; left: 50%; bottom: 8vh; transform: translateX(-50%);
+    font-family: var(--disp); font-size: clamp(19px, 2.6vw, 30px); letter-spacing: .1em;
+    color: var(--ivory); text-shadow: 0 2px 26px rgba(0,0,0,.7);
+    opacity: 0; transition: opacity .9s var(--ease);
+  }
+  .travel .t-word.on { opacity: .92; }
+  .travel .enter { position: absolute; z-index: 3; top: 10vh; left: 50%; transform: translateX(-50%);
+                   font-family: var(--mono); font-size: 11px; letter-spacing: .3em; text-transform: uppercase;
+                   color: var(--t3); white-space: nowrap; }
+
+  /* ---------- Ende ---------- */
+  .end { position: relative; min-height: 120vh; display: grid; place-items: center; text-align: center; overflow: hidden; }
+  .end .ph { position: absolute; inset: -12% 0; opacity: .5; will-change: transform; }
+  .end .ph img { width: 100%; height: 100%; object-fit: cover; }
+  .end::after { content: ""; position: absolute; inset: 0; background: radial-gradient(90% 70% at 50% 45%, rgba(10,9,8,.25), var(--ink) 92%); }
+  .end-inner { position: relative; z-index: 2; max-width: 780px; padding: 0 26px; }
+  .end .q { font-family: var(--disp); font-size: clamp(26px, 4.2vw, 48px); line-height: 1.35; color: var(--ivory); text-wrap: balance; }
+  .end .sub { margin-top: 30px; color: var(--t3); font-size: 15px; }
+  .end .meta { margin-top: 70px; font-family: var(--mono); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: rgba(237,228,204,.35); display: flex; gap: 30px; justify-content: center; }
+
+  /* Ausgeschnittene Hybride — eine Ebene vor der Welt, langsamer im
+     Übergang als der Hintergrund: Diorama-Tiefe wie im Hero. */
+  .travel .hold img.cut {
+    position: absolute; inset: auto; top: auto; left: 50%; bottom: -2vh;
+    height: 52vh; width: auto; max-width: none; object-fit: contain;
+    opacity: 0; transition: opacity 1.1s var(--ease), transform 9s linear;
+    transform: translateX(-50%) scale(1.05);
+    filter: drop-shadow(0 20px 50px rgba(0,0,0,.55));
+    pointer-events: none;
+  }
+  .travel .hold img.cut.on {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+
+  @media (max-width: 640px) {
+    .scene { height: 96vh; }
+    .travel { height: 520vh; }
+    .silence { height: 200vh; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .scene .words, .silence .s-line { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">← hannoknatz.com</a>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <canvas id="seed" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <h1>Anti-Willkür</h1>
+    <p class="line">Es könnte anders sein.</p>
+    <p class="whisper">Ein Experiment — keine Antwort</p>
+  </div>
+  <p class="scroll">Langsam scrollen</p>
+</header>
+
+<!-- ============ SZENEN ============ -->
+<!-- Level 0 -->
+<figure class="scene" data-img="l0_scientists_hall">
+  <div class="ph"><img src="assets/levelzero/l0_scientists_hall.jpg" alt="" loading="eager"></div>
+  <figcaption class="words">
+    <p class="q">Es beginnt mit einer Frage,<br>die niemand beantworten kann.</p>
+  </figcaption>
+</figure>
+
+<figure class="scene" data-img="l0_archive">
+  <div class="ph"><img src="assets/levelzero/l0_archive.jpg" alt="" loading="lazy"></div>
+  <figcaption class="words">
+    <p class="q">Was geschieht mit dem, was erinnert,<br>wenn alles Kopie werden kann?</p>
+  </figcaption>
+</figure>
+
+<figure class="scene" data-img="l0_sanduhren">
+  <div class="ph"><img src="assets/levelzero/l0_sanduhren.jpg" alt="" loading="lazy"></div>
+  <figcaption class="words">
+    <p class="q">Bevor eine Welt entsteht,<br>bekommt ihre Zeit eine Richtung.</p>
+    <p class="c">Einige wenige Regeln. Die gelten. Was daraus wird — offen.</p>
+  </figcaption>
+</figure>
+
+<figure class="scene" data-img="l0_blume">
+  <div class="ph"><img src="assets/levelzero/l0_blume.jpg" alt="" loading="lazy"></div>
+  <figcaption class="words">
+    <p class="q">Irgendwo liegt eine Saat.</p>
+    <p class="c">Kein Plan. Eine Möglichkeit.</p>
+  </figcaption>
+</figure>
+
+<figure class="scene" data-img="l0_god">
+  <div class="ph"><img src="assets/levelzero/l0_god.jpg" alt="" loading="lazy"></div>
+  <figcaption class="words">
+    <p class="q">Und wer die Regeln schreibt,<br>steht plötzlich selbst in ihnen.</p>
+  </figcaption>
+</figure>
+
+<figure class="scene" data-img="l0_god_console">
+  <div class="ph"><img src="assets/levelzero/l0_god_console.jpg" alt="" loading="lazy"></div>
+  <figcaption class="words">
+    <p class="q">Jeder Eingriff bleibt.<br>Auch das Weglassen.</p>
+  </figcaption>
+</figure>
+
+<!-- Stillstand -->
+<figure class="scene" data-img="l0_stillstand_ball">
+  <div class="ph"><img src="assets/levelzero/l0_stillstand_ball.jpg" alt="" loading="lazy"></div>
+  <figcaption class="words">
+    <p class="q">Und dann — mitten im Lauf der Dinge —<br>steht eines still.</p>
+  </figcaption>
+</figure>
+
+<!-- Stille -->
+<section class="silence" id="silence">
+  <div class="hold">
+    <div class="s-line" id="s1">
+      <p class="mono">Der erwartete Prompt erscheint nicht</p>
+      <p class="big">Nichts zwingt dich,<br>in diesem Moment weiterzumachen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Übergang in die Welten -->
+<figure class="scene" data-img="l0_key">
+  <div class="ph"><img src="assets/levelzero/l0_key.jpg" alt="" loading="lazy"></div>
+  <figcaption class="words gold">
+    <p class="q">Es könnte anders sein.</p>
+  </figcaption>
+</figure>
+
+<!-- Reise: die Welten -->
+<section class="travel" id="travel">
+  <div class="hold" id="reel">
+    <p class="enter">Zehn Welten — eine Reise</p>
+    <p class="t-word" id="tword"></p>
+    <img class="cut" id="cut-spiegel" src="assets/levelzero/hy_polierer.webp" alt="" loading="lazy">
+    <img class="cut" id="cut-perle" src="assets/levelzero/hy_perlenaustern.webp" alt="" loading="lazy">
+    <img class="cut" id="cut-asche" src="assets/levelzero/hy_glashueter.webp" alt="" loading="lazy">
+  </div>
+</section>
+
+<!-- Level 2: eine Welt, die in einer Welt beginnt -->
+<figure class="scene" data-img="l0_weberin">
+  <div class="ph"><img src="assets/levelzero/l0_weberin.jpg" alt="" loading="lazy"></div>
+  <figcaption class="words">
+    <p class="q">Und irgendwo, tief in einer dieser Welten,<br>beginnt eine Welt, von sich zu träumen.</p>
+    <p class="c">In Level 1 gewoben — und doch nicht weniger real für die, die in ihr wachen.</p>
+  </figcaption>
+</figure>
+
+<figure class="scene" data-img="l0_worldmap">
+  <div class="ph"><img src="assets/levelzero/l0_worldmap.jpg" alt="" loading="lazy"></div>
+  <figcaption class="words">
+    <p class="q">Wer hineinsieht,<br>wird selten unbeobachtet zurückkehren.</p>
+  </figcaption>
+</figure>
+
+<!-- ============ ENDE ============ -->
+<section class="end">
+  <div class="ph"><img src="assets/levelzero/l0_haenden.jpg" alt="" loading="lazy"></div>
+  <div class="end-inner">
+    <p class="q">Unter welchen Regeln würdest du selbst aufwachen wollen?</p>
+    <p class="sub">Vielleicht ist das die Antwort. Oder die nächste Hypothese.</p>
+    <div class="meta">
+      <a href="schwarm.html">Der Schwarm →</a>
+      <a href="animationen.html">Orbits →</a>
+      <a href="index.html">hannoknatz.com</a>
+      <span>Anti-Willkür · 2026</span>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  "use strict";
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- Hero: Saat ---------- */
+  var canvas = document.getElementById("seed");
+  if (canvas && !reduced) {
+    var ctx = canvas.getContext("2d");
+    var W, H, t = 0, parts = [], N = 110, mx = -1e4, my = -1e4, dpr = Math.min(devicePixelRatio || 1, 2);
+    function size() { W = canvas.width = canvas.offsetWidth * dpr; H = canvas.height = canvas.offsetHeight * dpr; }
+    size(); addEventListener("resize", size);
+    for (var i = 0; i < N; i++) parts.push({ x: Math.random(), y: Math.random(), p: Math.random() * 6.28, s: 0.3 + Math.random() * 0.8, r: 0.5 + Math.random() * 1.4 });
+    var hero = document.querySelector(".hero");
+    hero.addEventListener("pointermove", function (e) {
+      var r = canvas.getBoundingClientRect();
+      mx = (e.clientX - r.left) * dpr; my = (e.clientY - r.top) * dpr;
+    });
+    hero.addEventListener("pointerleave", function () { mx = my = -1e4; });
+    (function loop() {
+      t += 0.0028;
+      ctx.clearRect(0, 0, W, H);
+      var cx = W * 0.5, cy = H * 0.58;
+      var pulse = 1 + Math.sin(t * 2) * 0.14;
+      var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, 170 * pulse * dpr);
+      g.addColorStop(0, "rgba(201,162,39,0.16)"); g.addColorStop(1, "rgba(201,162,39,0)");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      ctx.beginPath();
+      for (var u = 0; u <= 1.001; u += 0.008) {
+        var fx = W * (0.06 + 0.88 * u);
+        var fy = H * (0.58 + Math.sin(u * 4.6 + t * 2.6) * 0.1 * Math.sin(u * Math.PI));
+        u === 0 ? ctx.moveTo(fx, fy) : ctx.lineTo(fx, fy);
+      }
+      ctx.strokeStyle = "rgba(201,162,39,0.38)"; ctx.lineWidth = 1 * dpr; ctx.stroke();
+      for (var k = 0; k < parts.length; k++) {
+        var p = parts[k];
+        var px = (p.x + Math.sin(t * p.s + p.p) * 0.04) * W;
+        var py = (p.y + Math.cos(t * p.s * 0.7 + p.p) * 0.05) * H;
+        var dx = px - mx, dy = py - my, dd = Math.sqrt(dx * dx + dy * dy);
+        if (dd < 160 * dpr) { px += dx / dd * 20 * dpr; py += dy / dd * 20 * dpr; }
+        ctx.beginPath();
+        ctx.arc(px, py, p.r * dpr, 0, 6.284);
+        ctx.fillStyle = "rgba(201,162,39," + (0.12 + p.s * 0.09) + ")";
+        ctx.fill();
+      }
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  if (reduced) {
+    document.querySelectorAll(".scene").forEach(function (s) { s.classList.add("in"); });
+    return;
+  }
+
+  /* ---------- Parallax + Wörter ---------- */
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene"));
+  var layers = scenes.map(function (s) { return { el: s, ph: s.querySelector(".ph"), target: 0, cur: 0 }; });
+  function tick() {
+    var vh = innerHeight;
+    layers.forEach(function (L) {
+      var r = L.el.getBoundingClientRect();
+      if (r.bottom < -80 || r.top > vh + 80) return;
+      var center = (r.top + r.height / 2 - vh / 2) / (vh / 2);   // -1..1
+      L.target = center * -60;                                   // px drift
+      L.cur += (L.target - L.cur) * 0.08;
+      L.ph.style.transform = "translate3d(0," + L.cur.toFixed(2) + "px,0) scale(1.06)";
+      if (r.top < vh * 0.72 && r.bottom > vh * 0.28) L.el.classList.add("in");
+    });
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  /* ---------- Stille: Text atmet mit Scrollfortschritt ---------- */
+  var sil = document.getElementById("silence");
+  var s1 = document.getElementById("s1");
+  function silence() {
+    var r = sil.getBoundingClientRect();
+    var total = r.height - innerHeight;
+    var prog = Math.min(1, Math.max(0, -r.top / total));
+    /* sichtbar im mittleren Drittel, mit weichem An- und Auslaufen */
+    var o = prog < 0.16 ? prog / 0.16 : prog > 0.78 ? Math.max(0, (1 - prog) / 0.22) : 1;
+    s1.style.opacity = o.toFixed(3);
+    s1.style.transform = "translateY(" + ((1 - o) * 18).toFixed(1) + "px)";
+  }
+
+  /* ---------- Reise: Welten am Stück ---------- */
+  var WORLDS = [
+    ["w_uhr", "Die Uhrwelt"], ["w_see", "Die Tiefsee"], ["w_lichtung", "Die Lichtung"],
+    ["w_facet", "Die Facettenwelt"], ["w_nebel", "Die Nebelwelt"], ["w_draht", "Die Drahtwelt"],
+    ["w_spiegel", "Die Spiegelwelt"], ["w_perle", "Die Perlmuttwelt"], ["w_asche", "Die Aschewelt"],
+    ["w_bibliothek", "Die Bibliothekswelt"]
+  ];
+  var travel = document.getElementById("travel");
+  var reel = document.getElementById("reel");
+  var tword = document.getElementById("tword");
+  var imgs = WORLDS.map(function (w) {
+    var im = document.createElement("img");
+    im.src = "assets/levelzero/" + w[0] + ".jpg"; im.alt = ""; im.loading = "lazy";
+    reel.insertBefore(im, tword);
+    return im;
+  });
+  var idx = -1;
+  function travelUpdate() {
+    var r = travel.getBoundingClientRect();
+    var total = r.height - innerHeight;
+    var prog = Math.min(0.999, Math.max(0, -r.top / total));
+    var i = Math.min(WORLDS.length - 1, Math.floor(prog * WORLDS.length));
+    if (i !== idx) {
+      idx = i;
+      imgs.forEach(function (im, k) { im.classList.toggle("on", k === i); });
+      var cuts = { 6: "cut-spiegel", 7: "cut-perle", 8: "cut-asche" };
+      Object.keys(cuts).forEach(function (k) {
+        var c = document.getElementById(cuts[k]);
+        if (c) c.classList.toggle("on", Number(k) === i);
+      });
+      tword.textContent = WORLDS[i][1];
+      tword.classList.add("on");
+      clearTimeout(tword._h);
+      tword._h = setTimeout(function () { tword.classList.remove("on"); }, 2600);
+    }
+  }
+
+  var running = false;
+  function onScroll() {
+    if (!running) { running = true; requestAnimationFrame(function () { silence(); travelUpdate(); running = false; }); }
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>
