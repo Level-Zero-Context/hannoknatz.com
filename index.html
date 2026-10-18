@@ -680,21 +680,49 @@
       --t4: #999999;
     }
     .nav, .noise, .skip-link, .foot-row a, .hero-bg, .orbit-visual, .site-readability, #companion, .hero-scrim, .hero-caption, #roterfaden, .cv-link { display: none; }
-    body { background: #fff; }
-    h1 { background: none; -webkit-text-fill-color: currentColor; font-size: 32px; }
-    .sig { width: 220px; }
-    .sig-fill { color: #111111; }
+    body { background: #fff !important; }
+    main.container,
+    footer.container {
+      width: auto;
+      max-width: 1200px;
+      margin-inline: auto;
+      padding-inline: 40px;
+      background: #fff !important;
+    }
+    .sig { width: auto; aspect-ratio: auto; margin-block: 0 24px; }
+    .sig svg { display: none; }
+    .sig h1.sr-only {
+      position: static;
+      width: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      clip: auto;
+      white-space: normal;
+      border: 0;
+      display: block;
+      color: #111111;
+      background: none;
+      -webkit-text-fill-color: currentColor;
+      font-size: 32px;
+      line-height: 1.15;
+    }
     h2.sec-label { display: block; margin-bottom: 8px; }
     .lede { font-size: 16px; line-height: 24px; font-weight: 500; } .lede-sub { margin-top: 8px; }
     .hero { min-height: 0; display: block; padding: 0 0 24px; }
     main { padding-bottom: 0; }
-    section { scroll-margin-top: 0; }
+    section { display: block; scroll-margin-top: 0; }
     section + section { margin-top: 32px; }
+    .pair {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      column-gap: 40px;
+      row-gap: 0;
+    }
     .role { padding-block: 24px; }
     .role:first-of-type { padding-top: 0; }
     .sec-label, .role-head { break-after: avoid; break-inside: avoid; }
-    .role, .edu, .lang-row, .earlier, #education { break-inside: avoid; }
-    footer { padding-block: 24px 0; border-top: none; }
+    .role, .edu, .lang-row, .earlier { break-inside: avoid; }
+    footer { display: none; }
     html.js .reveal, html.js .reveal.is-in {
       opacity: 1 !important;
       transform: none !important;
