@@ -671,6 +671,7 @@
      A4 minus margins lands below the 768px breakpoint, so re-show section
      headers and retint everything through the custom properties. */
   @media print {
+    @page { margin: 0.42in 0.46in; }
     :root {
       --line: #dddddd;
       --t1: #111111;
@@ -679,16 +680,20 @@
       --t4: #999999;
     }
     .nav, .noise, .skip-link, .foot-row a, .hero-bg, .orbit-visual, .site-readability, #companion, .hero-scrim, .hero-caption, #roterfaden, .cv-link { display: none; }
-    body { background: #fff !important; }
+    body {
+      background: #fff !important;
+      font-size: 13px;
+      line-height: 18px;
+    }
     main.container,
     footer.container {
       width: auto;
       max-width: 1200px;
       margin-inline: auto;
-      padding-inline: 40px;
+      padding-inline: 0;
       background: #fff !important;
     }
-    .sig { width: auto; aspect-ratio: auto; margin-block: 0 24px; }
+    .sig { width: auto; aspect-ratio: auto; margin-block: 0 12px; }
     .sig svg { display: none; }
     .sig h1.sr-only {
       position: static;
@@ -703,22 +708,36 @@
       color: #111111;
       background: none;
       -webkit-text-fill-color: currentColor;
-      font-size: 32px;
+      font-size: 28px;
       line-height: 1.15;
     }
     h2.sec-label { display: block; margin-bottom: 8px; }
-    .lede { font-size: 16px; line-height: 24px; font-weight: 500; } .lede-sub { margin-top: 8px; }
-    .hero { min-height: 0; display: block; padding: 0 0 24px; }
+    .lede { font-size: 14px; line-height: 20px; font-weight: 500; }
+    .lede2 { margin-top: 2px; }
+    .meta { margin-top: 6px; }
+    .hero { min-height: 0; display: block; padding: 0 0 14px; }
     main { padding-bottom: 0; }
     section { display: block; scroll-margin-top: 0; }
-    section + section { margin-top: 32px; }
+    section + section { margin-top: 18px; }
     .pair {
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
       column-gap: 40px;
       row-gap: 0;
     }
-    .role { padding-block: 24px; }
+    .role { padding-block: 12px; }
     .role:first-of-type { padding-top: 0; }
+    .role ul { margin-top: 6px; }
+    .role li + li { margin-top: 3px; }
+    .role > p:not(.proj-tag):not(.org) { margin-top: 6px; }
+    .proj-intro { margin-bottom: 2px; }
+    .proj-tag { margin-top: 2px; }
+    .skills { display: block !important; }
+    .skills > div + div { margin-top: 14px; }
+    .skill-label { margin-bottom: 3px; }
+    .skill-items, .edu .inst, .edu .thesis { font-size: 13px; line-height: 18px; }
+    .edu + .edu { margin-top: 12px; }
+    .edu .thesis { margin-top: 5px; }
+    .lang-row + .lang-row { margin-top: 6px; }
     .sec-label, .role-head { break-after: avoid; break-inside: avoid; }
     .role, .edu, .lang-row, .earlier { break-inside: avoid; }
     footer { display: none; }
@@ -842,7 +861,7 @@ c-15 11 -46 23 -69 26 l-42 6 19 21 c47 51 68 136 40 164 -18 18 -47 14 -113
       </div>
       <p class="lede reveal">Hanno Knatz is a technical leader and system architect working across scientific software, data platforms and applied AI. In global pharmaceutical R&amp;D, he led a Lab IT engineering team and owned the architecture and lifecycle of a biological assay analysis platform used across laboratories worldwide.</p>
       <p class="lede2 reveal">Current independent work focuses on AI agents, local inference and workflow automation.</p>
-      <address class="meta reveal">Mainz, Germany&ensp;·&ensp;<a class="cv-link" href="cv-hanno-knatz.pdf?v=20261018-2">CV as PDF</a></address>
+      <address class="meta reveal">Mainz, Germany&ensp;·&ensp;<a class="cv-link" href="cv-hanno-knatz.pdf?v=20261018-3">CV as PDF</a></address>
   </div>
 </header>
 
